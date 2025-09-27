@@ -12,3 +12,4 @@ plugins {
 
 rootProject.name = "parquet-wr-fixtures"
 include("encrypted-parquet-inspector")
+include("encrypted-parquet-generator")

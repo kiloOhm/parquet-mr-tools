@@ -1,0 +1,46 @@
+plugins {
+  id 'java'
+  id 'application'
+  id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'org.example'
+version = '1.0.0'
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17) // or 21
+  }
+}
+
+repositories { mavenCentral() }
+
+dependencies {
+  implementation 'org.apache.parquet:parquet-hadoop:1.13.1'
+  // For the "example" writer & Group API:
+  implementation 'org.apache.parquet:parquet-column:1.13.1'
+
+  implementation 'org.slf4j:slf4j-simple:2.0.13'
+  implementation('org.apache.hadoop:hadoop-common:3.3.6') {
+    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    exclude group: 'log4j', module: 'log4j'
+  }
+}
+
+application {
+  mainClass = 'org.example.ParquetGenerate'
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.encoding = 'UTF-8'
+}
+
+tasks.named('shadowJar') {
+  archiveBaseName.set('encrypted-parquet-generator')
+  archiveClassifier.set(null)
+  archiveVersion.set('1.0.0')
+}
+
+tasks.named('run') {
+  standardInput = System.in
+}
