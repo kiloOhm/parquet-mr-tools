@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Current File",
+      "request": "launch",
+      "mainClass": "${file}",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "java",
+      "name": "ParquetGenerateAll (quick)",
+      "request": "launch",
+      "mainClass": "org.example.ParquetGenerateAll",
+      "projectName": "encrypted-parquet-generator",
+      "args": [
+        "${workspaceFolder}/out",
+        "testBaseKey",
+        "--rows=10",
+        "--aadPrefix=mr-suite"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "java",
+      "name": "Inspector (quick EF sample)",
+      "request": "launch",
+      "mainClass": "org.example.Inspector",
+      "projectName": "encrypted-parquet-inspector",
+      "args": [
+        "${workspaceFolder}/out/algo=gcm_ctr,mode=EF,aad=stored,partial=Y,keymeta=Y_file-16.parquet",
+        "testBaseKey"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "java",
+      "name": "Inspector (quick PF sample)",
+      "request": "launch",
+      "mainClass": "org.example.Inspector",
+      "projectName": "encrypted-parquet-inspector",
+      "args": [
+        "${workspaceFolder}/out/algo=gcm_ctr,mode=PF,aad=stored,partial=Y,keymeta=Y_file-16.parquet",
+        "testBaseKey"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}

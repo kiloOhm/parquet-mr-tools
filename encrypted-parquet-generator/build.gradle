@@ -5,30 +5,35 @@ plugins {
 }
 
 group = 'org.example'
-version = '1.0.0'
+version = '1.0.1'
 
 java {
-  toolchain {
-    languageVersion = JavaLanguageVersion.of(17) // or 21
-  }
+  toolchain { languageVersion = JavaLanguageVersion.of(17) } // or 21
 }
 
 repositories { mavenCentral() }
 
 dependencies {
-  implementation 'org.apache.parquet:parquet-hadoop:1.13.1'
-  // For the "example" writer & Group API:
-  implementation 'org.apache.parquet:parquet-column:1.13.1'
+  implementation 'org.apache.parquet:parquet-hadoop:1.16.0'
 
   implementation 'org.slf4j:slf4j-simple:2.0.13'
+
   implementation('org.apache.hadoop:hadoop-common:3.3.6') {
     exclude group: 'org.slf4j', module: 'slf4j-log4j12'
     exclude group: 'log4j', module: 'log4j'
+    exclude group: 'ch.qos.reload4j', module: 'reload4j'
   }
+  implementation('org.apache.hadoop:hadoop-mapreduce-client-core:3.3.6') {
+    exclude group: 'org.slf4j'
+    exclude group: 'log4j'
+    exclude group: 'ch.qos.reload4j'
+  }
+  implementation 'org.apache.hadoop:hadoop-annotations:3.3.6'
 }
 
 application {
-  mainClass = 'org.example.ParquetGenerate'
+  // Default entrypoint; the "All" variant is exposed via runAll/shadowJarAll below.
+  mainClass = 'org.example.ParquetGenerateAll'
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -37,10 +42,14 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.named('shadowJar') {
   archiveBaseName.set('encrypted-parquet-generator')
-  archiveClassifier.set(null)
-  archiveVersion.set('1.0.0')
+  archiveClassifier.set('')           // shadow jar becomes the main artifact
+  archiveVersion.set(project.version as String)
+  manifest { attributes('Main-Class': 'org.example.ParquetGenerate') }
 }
 
-tasks.named('run') {
-  standardInput = System.in
-}
+tasks.named('jar') { enabled = false } // don't build the thin jar
+
+// Make dist tasks run after shadowJar (but DON'T add the jar again to contents)
+tasks.named('startScripts') { dependsOn(tasks.named('shadowJar')) }
+tasks.named('distZip')      { dependsOn(tasks.named('shadowJar')) }
+tasks.named('distTar')      { dependsOn(tasks.named('shadowJar')) }
