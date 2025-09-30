@@ -10,6 +10,5 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
-rootProject.name = "parquet-wr-fixtures"
-include("encrypted-parquet-inspector")
-include("encrypted-parquet-generator")
+rootProject.name = "parquet-mr-tools"
+include 'encrypted_parquet_inspector', 'parquet_sample_generator'

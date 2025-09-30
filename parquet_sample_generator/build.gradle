@@ -1,0 +1,39 @@
+plugins {
+  id 'java'
+  id 'application'
+}
+
+group = 'org.example'
+version = '1.0.1'
+
+java {
+  toolchain { languageVersion = JavaLanguageVersion.of(17) }
+}
+
+repositories { mavenCentral() }
+
+dependencies {
+  implementation 'org.apache.parquet:parquet-hadoop:1.16.0'
+
+  implementation 'org.slf4j:slf4j-simple:2.0.13'
+
+  implementation('org.apache.hadoop:hadoop-common:3.3.6') {
+    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    exclude group: 'log4j', module: 'log4j'
+    exclude group: 'ch.qos.reload4j', module: 'reload4j'
+  }
+  implementation('org.apache.hadoop:hadoop-mapreduce-client-core:3.3.6') {
+    exclude group: 'org.slf4j'
+    exclude group: 'log4j'
+    exclude group: 'ch.qos.reload4j'
+  }
+  implementation 'org.apache.hadoop:hadoop-annotations:3.3.6'
+}
+
+application {
+  mainClass = 'org.example.parquet_sample_generator.ParquetSampleGenerator'
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.encoding = 'UTF-8'
+}
